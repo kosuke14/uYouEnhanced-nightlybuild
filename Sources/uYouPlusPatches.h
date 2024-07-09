@@ -84,3 +84,13 @@
 @interface YTIInnertubeCommandExtensionRoot
 + (GPBExtensionDescriptor*)innertubeCommand;
 @end
+
+@interface YTAccountScopedCommandResponderEvent
+@property (nonatomic, strong, readwrite) YTICommand *command;
+@end
+
+@interface YTIShareEntityEndpoint
+@property (nonatomic, assign, readwrite) BOOL hasSerializedShareEntity;
+@property (nonatomic, copy, readwrite) NSString *serializedShareEntity;
++ (GPBExtensionDescriptor*)shareEntityEndpoint;
+@end

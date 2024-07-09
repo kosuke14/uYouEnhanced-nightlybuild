@@ -24,8 +24,6 @@
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
 
-    self.appIcons = @[@"White", @"YTLitePlus", @"Blue", @"Outline", @"2012", @"2013", @"2007", @"Black", @"Oreo", @"uYou", @"2012_Cyan", @"uYouPlus"];
-
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     NSBundle *backIcon = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"uYouPlus" ofType:@"bundle"]];
     UIImage *backImage = [UIImage imageNamed:@"Back.png" inBundle:backIcon compatibleWithTraitCollection:nil];
@@ -72,18 +70,22 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
     
-    NSString *iconName = self.appIcons[indexPath.row];
-    cell.textLabel.text = iconName;
-
-    UIImage *iconImage = [UIImage imageNamed:iconName];
-    cell.imageView.image = [self createRoundedImage:iconImage size:CGSizeMake(40, 40)];
-
+    NSString *iconPath = self.appIcons[indexPath.row];
+    cell.textLabel.text = [iconPath.lastPathComponent stringByDeletingPathExtension];
+    
+    UIImage *iconImage = [UIImage imageWithContentsOfFile:iconPath];
+    cell.imageView.image = iconImage;
+    cell.imageView.layer.cornerRadius = 10.0;
+    cell.imageView.clipsToBounds = YES;
+    cell.imageView.frame = CGRectMake(10, 10, 40, 40);
+    cell.textLabel.frame = CGRectMake(60, 10, self.view.frame.size.width - 70, 40);
+    
     if (indexPath.row == self.selectedIconIndex) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-
+    
     return cell;
 }
 
@@ -95,6 +97,11 @@
 }
 
 - (void)resetIcon {
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
+    NSMutableDictionary *infoDict = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+    [infoDict removeObjectForKey:@"ALTAppIcon"];
+    [infoDict writeToFile:plistPath atomically:YES];
+
     [[UIApplication sharedApplication] setAlternateIconName:nil completionHandler:^(NSError * _Nullable error) {
         if (error) {
             NSLog(@"Error resetting icon: %@", error.localizedDescription);
@@ -102,7 +109,9 @@
         } else {
             NSLog(@"Icon reset successfully");
             [self showAlertWithTitle:@"Success" message:@"Icon reset successfully"];
-            [self.tableView reloadData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
         }
     }];
 }
@@ -112,55 +121,50 @@
         NSLog(@"Alternate icons are not supported on this device.");
         return;
     }
-
-    NSString *iconName = self.appIcons[self.selectedIconIndex];
-
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"uYouPlus" ofType:@"bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:path];
-    NSString *imagePath = [bundle pathForResource:iconName ofType:@"png"];
-    UIImage *iconImage = [UIImage imageWithContentsOfFile:imagePath];
-
-    if (!iconImage) {
-        NSLog(@"Failed to load custom icon image");
-        return;
-    }
-
-    UIImage *roundedIconImage = [self createRoundedImage:iconImage size:CGSizeMake(120, 120)]; // Adjust size as needed
-
-    NSData *imageData = UIImagePNGRepresentation(roundedIconImage);
-    NSString *newIconPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@_custom", iconName] ofType:@"png"];
-    [imageData writeToFile:newIconPath atomically:YES];
-
-    [[UIApplication sharedApplication] setAlternateIconName:[NSString stringWithFormat:@"%@_custom", iconName] completionHandler:^(NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"Error setting alternate icon: %@", error.localizedDescription);
-            [self showAlertWithTitle:@"Error" message:@"Failed to set alternate icon"];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *selectedIcon = self.selectedIconIndex >= 0 ? self.appIcons[self.selectedIconIndex] : nil;
+        if (selectedIcon) {
+            NSString *iconName = [selectedIcon.lastPathComponent stringByDeletingPathExtension];
+           
+            NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
+            NSMutableDictionary *infoDict = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+            [infoDict setObject:iconName forKey:@"ALTAppIcon"];
+            [infoDict writeToFile:plistPath atomically:YES];
+            
+            [[UIApplication sharedApplication] setAlternateIconName:iconName completionHandler:^(NSError * _Nullable error) {
+                if (error) {
+                    NSLog(@"Error setting alternate icon: %@", error.localizedDescription);
+                    [self showAlertWithTitle:@"Error" message:@"Failed to set alternate icon"];
+                } else {
+                    NSLog(@"Alternate icon set successfully");
+                    [self showAlertWithTitle:@"Success" message:@"Alternate icon set successfully"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.tableView reloadData];
+                    });
+                }
+            }];
         } else {
-            NSLog(@"Alternate icon set successfully");
-            [self showAlertWithTitle:@"Success" message:@"Alternate icon set successfully"];
-            [self.tableView reloadData];
+            NSLog(@"Selected icon path is nil");
         }
-    }];
+    });
 }
 
-- (UIImage *)createRoundedImage:(UIImage *)image size:(CGSize)size {
+- (UIImage *)resizeImage:(UIImage *)image toSize:(CGSize)size {
     UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
-    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:size.width * 0.1]; // Adjust the corner radius as needed
-    [path addClip];
     [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-    UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return roundedImage;
+    return resizedImage;
 }
 
-- (UIImage *)resizeImage:(UIImage *)image newSize:(CGSize)newSize { // Back Button
+- (UIImage *)resizeImage:(UIImage *)image newSize:(CGSize)newSize {
     UIGraphicsBeginImageContextWithOptions(newSize, NO, [UIScreen mainScreen].scale);
     [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
- }
+}
 
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message {
     dispatch_async(dispatch_get_main_queue(), ^{

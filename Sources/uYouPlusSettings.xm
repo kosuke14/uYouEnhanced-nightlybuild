@@ -78,7 +78,7 @@ NSArray *copyKeys = @[
 /* MAIN     Shorts Keys */ @"hideBuySuperThanks_enabled", @"hideSubcriptions_enabled", @"disableResumeToShorts_enabled", @"shortsQualityPicker_enabled",
 /* MAIN  Player UI Keys */ @"redSubscribeButton_enabled", @"hideButtonContainers_enabled", @"hideConnectButton_enabled", @"hideShareButton_enabled", @"hideRemixButton_enabled", @"hideThanksButton_enabled", @"hideDownloadButton_enabled", @"hideClipButton_enabled", @"hideSaveToPlaylistButton_enabled", @"hideReportButton_enabled", @"hidePreviewCommentSection_enabled", @"hideCommentSection_enabled",
 /* MAIN    Overlay Keys */ @"disableAccountSection_enabled", @"disableAutoplaySection_enabled", @"disableTryNewFeaturesSection_enabled", @"disableVideoQualityPreferencesSection_enabled", @"disableNotificationsSection_enabled", @"disableManageAllHistorySection_enabled", @"disableYourDataInYouTubeSection_enabled", @"disablePrivacySection_enabled", @"disableLiveChatSection_enabled", @"hidePremiumPromos_enabled",
-/* MAIN     App UI Keys */ @"hideHomeTab_enabled", @"lowContrastMode_enabled", @"fixLowContrastMode_enabled", @"disableModernButtons_enabled", @"disableRoundedHints_enabled", @"disableModernFlags_enabled", @"ytNoModernUI_enabled", @"enableVersionSpoofer_enabled",
+/* MAIN     App UI Keys */ @"hideHomeTab_enabled", @"lowContrastMode_enabled", @"classicVideoPlayer_enabled", @"fixLowContrastMode_enabled", @"disableModernButtons_enabled", @"disableRoundedHints_enabled", @"disableModernFlags_enabled", @"ytNoModernUI_enabled", @"enableVersionSpoofer_enabled",
 /* MAIN       Misc Keys */ @"uYouAdBlockingWorkaroundLite_enabled", @"uYouAdBlockingWorkaround_enabled", @"disableAnimatedYouTubeLogo_enabled", @"centerYouTubeLogo_enabled", @"hideYouTubeLogo_enabled", @"ytStartupAnimation_enabled", @"disableHints_enabled", @"stickNavigationBar_enabled", @"hideSponsorBlockButton_enabled", @"hideChipBar_enabled", @"hidePlayNextInQueue_enabled", @"hideCommunityPosts_enabled", @"hideChannelHeaderLinks_enabled", @"iPhoneLayout_enabled", @"bigYTMiniPlayer_enabled", @"reExplore_enabled", @"autoHideHomeBar_enabled", @"hideSubscriptionsNotificationBadge_enabled", @"fixCasting_enabled", @"newSettingsUI_enabled", @"flex_enabled",
 /* TWEAK      uYou Keys */ @"showedWelcomeVC", @"hideShortsTab", @"hideCreateTab", @"hideCastButton", @"relatedVideosAtTheEndOfYTVideos", @"removeYouTubeAds", @"backgroundPlayback", @"disableAgeRestriction", @"iPadLayout", @"noSuggestedVideoAtEnd", @"shortsProgressBar", @"hideShortsCells", @"removeShortsCell", @"startupPage",
 /* TWEAK       iSB Keys */ @"userID", @"apiInstance", @"minimumDuration", @"skipNoticeDuration", @"kShowModifiedTime", @"showSkipNotice", @"showButtonsInPlayer", @"hideStartEndButtonInPlayer", @"showModifiedTime", @"skipAudioNotification", @"enableSkipCountTracking",
@@ -202,7 +202,7 @@ extern NSBundle *uYouPlusBundle();
             if (IS_ENABLED(@"replaceCopyandPasteButtons_enabled")) {
                 // Export Settings functionality
                 NSURL *tempFileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"exported_settings.txt"]];
-                NSMutableString *settingsString = [NSMutableNSMutableString string];
+                NSMutableString *settingsString = [NSMutableString string];
                 for (NSString *key in copyKeys) {
                     id value = [[NSUserDefaults standardUserDefaults] objectForKey:key];
                     if (value) {
@@ -213,9 +213,7 @@ extern NSBundle *uYouPlusBundle();
                 UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithURL:tempFileURL inMode:UIDocumentPickerModeExportToService];
                 documentPicker.delegate = (id<UIDocumentPickerDelegate>)self;
                 documentPicker.allowsMultipleSelection = NO;
-                [UIApplication.sharedApplication.keyWindow.rootViewController presentViewController:documentPicker animated:YES completion:nil];
-            }
-            return YES;
+                [settingsViewController presentViewController:documentPicker animated:YES completion:nil];
             } else {
                 // Copy Settings functionality (default behavior)
                 NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -245,7 +243,7 @@ extern NSBundle *uYouPlusBundle();
                 UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[@"public.text"] inMode:UIDocumentPickerModeImport];
                 documentPicker.delegate = (id<UIDocumentPickerDelegate>)self;
                 documentPicker.allowsMultipleSelection = NO;
-                [UIApplication.sharedApplication.keyWindow.rootViewController presentViewController:documentPicker animated:YES completion:nil];
+                [settingsViewController presentViewController:documentPicker animated:YES completion:nil];
                 return YES;
             } else {
                 // Paste Settings functionality (default behavior)
@@ -262,7 +260,7 @@ extern NSBundle *uYouPlusBundle();
                                 NSString *value = components[1];
                                 [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
                             }
-                        }
+                        }                 
                         [settingsViewController reloadData];
                         SHOW_RELAUNCH_YT_SNACKBAR;
                     }
@@ -274,7 +272,7 @@ extern NSBundle *uYouPlusBundle();
     ];
     [sectionItems addObject:pasteSettings];
 
-    SWITCH_ITEM(LOC(@"REPLACE_COPY_AND_PASTE_BUTTONS"), LOC(@"REPLACE_COPY_AND_PASTE_BUTTONS"), @"replaceCopyandPasteButtons_enabled");
+    SWITCH_ITEM(LOC(@"REPLACE_COPY_AND_PASTE_BUTTONS"), LOC(@"REPLACE_COPY_AND_PASTE_BUTTONS_DESC"), @"replaceCopyandPasteButtons_enabled");
 
     YTSettingsSectionItem *exitYT = [%c(YTSettingsSectionItem)
         itemWithTitle:LOC(@"QUIT_YOUTUBE")
@@ -294,7 +292,7 @@ extern NSBundle *uYouPlusBundle();
     # pragma mark - uYouEnhanced Essential Menu
     YTSettingsSectionItem *customAppMenu = [%c(YTSettingsSectionItem)
         itemWithTitle:LOC(@"UYOUENHANCED_ESSENTIAL_MENU")
-        titleDescription:LOC(@"This menu includes App Color Customization & Ability to Clear the Cache 🗑️")
+        titleDescription:LOC(@"This menu includes App Color Customization 🎨 & Ability to Clear the Cache 🗑️")
         accessibilityIdentifier:nil
         detailTextBlock:nil
         selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
@@ -436,6 +434,24 @@ extern NSBundle *uYouPlusBundle();
             }
         });
     );
+    SWITCH_ITEM3(
+        LOC(@"FULLSCREEN_TO_THE_RIGHT"), 
+        LOC(@"FULLSCREEN_TO_THE_RIGHT_DESC"), 
+        @"fullscreenToTheRight_enabled",
+        ({
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+                [[NSUserDefaults standardUserDefaults] setBool:enable forKey:@"fullscreenToTheRight_enabled"];
+                SHOW_RELAUNCH_YT_SNACKBAR;
+                return YES;
+            } else {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Incompatibile" message:@"This Option is Incompatible on an iPad Device." preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [settingsViewController presentViewController:alert animated:YES completion:nil];
+                return NO;
+            }
+        });
+    );
     SWITCH_ITEM2(LOC(@"SLIDE_TO_SEEK"), LOC(@"SLIDE_TO_SEEK_DESC"), @"slideToSeek_enabled");
     SWITCH_ITEM2(LOC(@"ENABLE_TAP_TO_SEEK"), LOC(@"ENABLE_TAP_TO_SEEK_DESC"), @"YTTapToSeek_enabled");
     SWITCH_ITEM(LOC(@"DISABLE_DOUBLE_TAP_TO_SEEK"), LOC(@"DISABLE_DOUBLE_TAP_TO_SEEK_DESC"), @"doubleTapToSeek_disabled");
@@ -529,7 +545,7 @@ extern NSBundle *uYouPlusBundle();
     # pragma mark - Video player button options
     SECTION_HEADER(LOC(@"VIDEO_PLAYER_BUTTON_OPTIONS"));
 
-// (the options "Red Subscribe Button" and "Hide Button Containers under player" are currently not working)
+// (the options "Red Subscribe Button" and "Hide Button Containers under player" are currently not working, would most likely result in effecting the whole entire app.)
 //
 //  SWITCH_ITEM(LOC(@"RED_SUBSCRIBE_BUTTON"), LOC(@"RED_SUBSCRIBE_BUTTON_DESC"), @"redSubscribeButton_enabled");
 //  SWITCH_ITEM2(LOC(@"HIDE_BUTTON_CONTAINERS_UNDER_PLAYER"), LOC(@"HIDE_BUTTON_CONTAINERS_UNDER_PLAYER_DESC"), @"hideButtonContainers_enabled");
@@ -639,6 +655,7 @@ extern NSBundle *uYouPlusBundle();
         }
     ];
     [sectionItems addObject:lowContrastModeButton];
+    SWITCH_ITEM2(LOC(@"CLASSIC_VIDEO_PLAYER"), LOC(@"CLASSIC_VIDEO_PLAYER_DESC"), @"classicVideoPlayer_enabled");
     SWITCH_ITEM2(LOC(@"FIX_LOWCONTRASTMODE"), LOC(@"FIX_LOWCONTRASTMODE_DESC"), @"fixLowContrastMode_enabled");
     SWITCH_ITEM2(LOC(@"DISABLE_MODERN_BUTTONS"), LOC(@"DISABLE_MODERN_BUTTONS_DESC"), @"disableModernButtons_enabled");
     SWITCH_ITEM2(LOC(@"DISABLE_ROUNDED_CORNERS_ON_HINTS"), LOC(@"DISABLE_ROUNDED_CORNERS_ON_HINTS_DESC"), @"disableRoundedHints_enabled");
@@ -1394,22 +1411,24 @@ extern NSBundle *uYouPlusBundle();
         [settingsViewController setSectionItems:sectionItems forCategory:uYouPlusSection title:@"uYouEnhanced" titleDescription:LOC(@"TITLE DESCRIPTION") headerHidden:YES];
 }
 
-// File Manager (Paste Settings)
+// File Manager (Import Settings .txt)
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
     if (urls.count > 0) {
         NSURL *fileURL = urls.firstObject;
         NSString *fileContents = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-        NSArray *lines = [fileContents componentsSeparatedByString:@"\n"];
-        for (NSString *line in lines) {
-            NSArray *components = [line componentsSeparatedByString:@": "];
-            if (components.count == 2) {
-                NSString *key = components[0];
-                NSString *value = components[1];
-                [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
+        if (fileContents.length > 0) {
+            NSArray *lines = [fileContents componentsSeparatedByString:@"\n"];
+            for (NSString *line in lines) {
+                NSArray *components = [line componentsSeparatedByString:@": "];
+                if (components.count == 2) {
+                    NSString *key = components[0];
+                    NSString *value = components[1];
+                    [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
+                }
             }
+            YTSettingsViewController *settingsViewController = [self valueForKey:@"_settingsViewControllerDelegate"];
+            [settingsViewController reloadData];
         }
-        [settingsViewController reloadData];
-        SHOW_RELAUNCH_YT_SNACKBAR;
     }
 }
 
