@@ -766,7 +766,7 @@ static int contrastMode() {
 %end
 
 // YTTapToSeek - https://github.com/bhackel/YTTapToSeek
-%group YTTTS_Tweak
+%group gYTTapToSeek
     %hook YTInlinePlayerBarContainerView
     - (void)didPressScrubber:(id)arg1 {
         %orig;
@@ -1771,7 +1771,7 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
         %init(gDisableLiveChatSection);
     }
     if (IS_ENABLED(@"YTTapToSeek_enabled")) {
-        %init(YTTTS_Tweak);
+        %init(gYTTapToSeek);
     }
     if (IS_ENABLED(@"hidePremiumPromos_enabled")) {
         %init(gHidePremiumPromos);
