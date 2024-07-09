@@ -16,6 +16,8 @@
 #import <YouTubeHeader/YTCollectionViewCell.h>
 #import <YouTubeHeader/YTIBrowseRequest.h>
 #import <YouTubeHeader/YTIButtonRenderer.h>
+#import <YouTubeHeader/YTICompactLinkRenderer.h>
+#import <YouTubeHeader/YTICompactListItemRenderer.h>
 #import <YouTubeHeader/YTIElementRenderer.h>
 #import <YouTubeHeader/YTIFormattedString.h>
 #import <YouTubeHeader/YTIGuideResponse.h>
@@ -88,30 +90,11 @@
 @end
 
 // Hide Premium Promo in You tab - @bhackel
-@interface YTIIconThumbnailRenderer : GPBMessage
-@property (nonatomic, strong) YTIIcon *icon;
-- (BOOL)hasIcon;
-@end
-@interface YTICompactListItemThumbnailSupportedRenderers : GPBMessage
-@property (nonatomic, strong) YTIIconThumbnailRenderer *iconThumbnailRenderer;
-- (BOOL)hasIconThumbnailRenderer;
-@end
-@interface YTICompactListItemRenderer : GPBMessage
-@property (nonatomic, strong) YTICompactListItemThumbnailSupportedRenderers *thumbnail;
-@property (nonatomic, strong) YTIFormattedString *title;
-- (BOOL)hasThumbnail;
-- (BOOL)hasTitle;
-@end
-@interface YTIIcon (uYouEnhanced)
-- (BOOL)hasIconType;
-@end
-@interface YTICompactLinkRenderer : GPBMessage
-@property (nonatomic, strong) YTIIcon *icon;
-@property (nonatomic, strong) YTIFormattedString *title;
-@property (nonatomic, strong) YTICompactListItemThumbnailSupportedRenderers *thumbnail;
-- (BOOL)hasIcon;
-- (BOOL)hasThumbnail;
-@end
+// YTIIconThumbnailRenderer Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTIIconThumbnailRenderer.h
+// YTICompactListItemThumbnailSupportedRenderers Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTICompactListItemThumbnailSupportedRenderers.h
+// YTICompactListItemRenderer Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTICompactListItemRenderer.h
+// YTIIcon Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTIIcon.h
+// YTICompactLinkRenderer Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTICompactLinkRenderer.h
 // YTIItemSectionSupportedRenderers Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTIItemSectionSupportedRenderers.h
 @interface YTAppCollectionViewController : YTInnerTubeCollectionViewController
 - (void)uYouEnhancedFakePremiumModel:(YTISectionListRenderer *)model;
