@@ -233,9 +233,10 @@ static __strong NSData *cellDividerData;
 %end
 %end
 
-%group gCenterYouTubeLogo
+// Center YouTube Logo - @arichornlover
+%group gCenterYouTubeLogo // BROKEN 
 %hook YTNavigationBarTitleView
-- (void)setShouldCenterNavBarTitleView:(BOOL)center {
+- (void)setShouldCenterNavBarTitleView:(BOOL)center { // Doesn't do anything?
     %orig(YES);
 }
 - (BOOL)shouldCenterNavBarTitleView {
@@ -993,7 +994,7 @@ static int contrastMode() {
 %hook YTWatchPullToFullController
 - (BOOL)shouldRecognizeOverscrollEventsFromWatchOverscrollController:(id)arg1 {
     // Get the current player orientation
-    YTWatchViewController *watchViewController = self.playerViewSource;
+    id<YTWatchPlayerViewLayoutSource> watchViewController = self.playerViewSource;
     NSUInteger allowedFullScreenOrientations = [watchViewController allowedFullScreenOrientations];
     // Check if the current player orientation is portrait
     if (allowedFullScreenOrientations == UIInterfaceOrientationMaskAllButUpsideDown
