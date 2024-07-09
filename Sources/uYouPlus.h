@@ -193,11 +193,6 @@
 - (void)settingsAction;
 @end
 
-@interface YTISlimMetadataButtonSupportedRenderers : NSObject
-- (id)slimButton_buttonRenderer;
-- (id)slimMetadataButtonRenderer;
-@end
-
 // YTSpeed
 @interface YTVarispeedSwitchControllerOption : NSObject
 - (id)initWithTitle:(id)title rate:(float)rate;
