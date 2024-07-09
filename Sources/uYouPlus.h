@@ -42,6 +42,7 @@
 #import <YouTubeHeader/YTReelModel.h>
 #import <YouTubeHeader/YTReelWatchPlaybackOverlayView.h>
 #import <YouTubeHeader/YTResponder.h>
+#import <YouTubeHeader/YTVarispeedSwitchControllerOption.h>
 #import <YouTubeHeader/YTVideoQualitySwitchOriginalController.h>
 #import <YouTubeHeader/YTVideoWithContextNode.h>
 #import <YouTubeHeader/YTWatchNextResultsViewController.h>
@@ -175,9 +176,7 @@
 @end
 
 // YTSpeed
-@interface YTVarispeedSwitchControllerOption : NSObject
-- (id)initWithTitle:(id)title rate:(float)rate;
-@end
+// YTVarispeedSwitchControllerOption Header has been moved to https://github.com/PoomSmart/YouTubeHeader/blob/main/YTVarispeedSwitchControllerOption.h
 
 @interface MLHAMQueuePlayer : NSObject
 @property id playerEventCenter;
