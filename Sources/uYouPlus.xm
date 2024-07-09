@@ -994,7 +994,7 @@ static int contrastMode() {
 %hook YTWatchPullToFullController
 - (BOOL)shouldRecognizeOverscrollEventsFromWatchOverscrollController:(id)arg1 {
     // Get the current player orientation
-    id<YTWatchPlayerViewLayoutSource> watchViewController = self.playerViewSource;
+    YTWatchViewController *watchViewController = self.playerViewSource;
     NSUInteger allowedFullScreenOrientations = [watchViewController allowedFullScreenOrientations];
     // Check if the current player orientation is portrait
     if (allowedFullScreenOrientations == UIInterfaceOrientationMaskAllButUpsideDown
