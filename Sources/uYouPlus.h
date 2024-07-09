@@ -76,12 +76,10 @@
 // Hide Home Tab - @bhackel
 @interface YTPivotBarItemViewAccessibilityControl : UIControl
 @end
-@interface YTPivotBarItemView (uYouEnhanced)
-@property (nonatomic, strong) YTPivotBarItemViewAccessibilityControl *hitTarget;
-@end
+// YTMainAppVideoPlayerOverlayViewController Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTMainAppVideoPlayerOverlayViewController.h
 
 // YTTapToSeek - https://github.com/bhackel/YTTapToSeek
-// Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTMainAppVideoPlayerOverlayViewController.h
+// YTPivotBarItemView Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTPivotBarItemView.h
 
 // Enable Premium logo - @bhackel
 @interface YTITopbarLogoRenderer : NSObject
