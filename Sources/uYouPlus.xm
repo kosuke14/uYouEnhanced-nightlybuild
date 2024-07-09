@@ -1704,6 +1704,9 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
     if (IS_ENABLED(@"fullscreenToTheRight_enabled")) {
         %init(gFullscreenToTheRight);
     }
+    if (IS_ENABLED(@"disableFullscreenButton_enabled")) {
+        %init(gHideFullscreenButton);
+    }
     if (IS_ENABLED(@"hideFullscreenActions_enabled")) {
         %init(hideFullscreenActions);
     }
