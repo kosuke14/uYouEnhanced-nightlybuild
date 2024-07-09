@@ -111,12 +111,7 @@
 - (BOOL)hasIcon;
 - (BOOL)hasThumbnail;
 @end
-@interface YTIItemSectionSupportedRenderers (uYouEnhanced)
-@property(readonly, nonatomic) YTICompactLinkRenderer *compactLinkRenderer;
-@property(readonly, nonatomic) YTICompactListItemRenderer *compactListItemRenderer;
-- (BOOL)hasCompactLinkRenderer;
-- (BOOL)hasCompactListItemRenderer;
-@end
+// YTIItemSectionSupportedRenderers Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/YTIItemSectionSupportedRenderers.h
 @interface YTAppCollectionViewController : YTInnerTubeCollectionViewController
 - (void)uYouEnhancedFakePremiumModel:(YTISectionListRenderer *)model;
 @end
@@ -125,7 +120,7 @@
 @end
 
 // Disable Pull to Full for landscape videos - @bhackel
-// Header has been moved to https://github.com/PoomSmart/YouTubeHeader/blob/main/YTWatchPullToFullController.h
+// YTWatchPullToFullController Header has been moved to https://github.com/PoomSmart/YouTubeHeader/blob/main/YTWatchPullToFullController.h
 
 // Fullscreen to the Right (uYouEnhanced Version) - @arichornlover
 @interface YTWatchViewController (uYouEnhanced)
