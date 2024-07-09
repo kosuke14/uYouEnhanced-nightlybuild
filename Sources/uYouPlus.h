@@ -12,6 +12,7 @@
 #import <YouTubeHeader/ELMCellNode.h>
 #import <YouTubeHeader/ELMNodeController.h>
 #import <YouTubeHeader/GPBMessage.h>
+#import <YouTubeHeader/MLPlayerStickySettings.h>
 #import <YouTubeHeader/YTAppDelegate.h>
 #import <YouTubeHeader/YTCollectionViewCell.h>
 #import <YouTubeHeader/YTIBrowseRequest.h>
@@ -42,7 +43,6 @@
 #import <YouTubeHeader/YTReelModel.h>
 #import <YouTubeHeader/YTReelWatchPlaybackOverlayView.h>
 #import <YouTubeHeader/YTResponder.h>
-#import <YouTubeHeader/YTVarispeedSwitchControllerOption.h>
 #import <YouTubeHeader/YTVideoQualitySwitchOriginalController.h>
 #import <YouTubeHeader/YTVideoWithContextNode.h>
 #import <YouTubeHeader/YTWatchNextResultsViewController.h>
@@ -176,7 +176,9 @@
 @end
 
 // YTSpeed
-// YTVarispeedSwitchControllerOption Header has been moved to https://github.com/PoomSmart/YouTubeHeader/blob/main/YTVarispeedSwitchControllerOption.h
+@interface YTVarispeedSwitchControllerOption : NSObject
+- (id)initWithTitle:(id)title rate:(float)rate;
+@end
 
 @interface MLHAMQueuePlayer : NSObject
 @property id playerEventCenter;
@@ -185,9 +187,7 @@
 - (void)internalSetRate;
 @end
 
-@interface MLPlayerStickySettings (uYouPlus)
-- (void)setRate:(float)rate;
-@end
+// MLPlayerStickySettings Header has been moved to https://github.com/arichornloverALT/YouTubeHeader/blob/main/MLPlayerStickySettings.h
 
 @interface MLPlayerEventCenter : NSObject
 - (void)broadcastRateChange:(float)rate;
