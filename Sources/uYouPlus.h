@@ -46,6 +46,7 @@
 #import <YouTubeHeader/YTVideoQualitySwitchOriginalController.h>
 #import <YouTubeHeader/YTVideoWithContextNode.h>
 #import <YouTubeHeader/YTWatchNextResultsViewController.h>
+#import <YouTubeHeader/YTWatchPlayerViewLayoutSource.h>
 #import <YouTubeHeader/YTWatchPullToFullController.h>
 #import <YouTubeHeader/YTWatchViewController.h>
 #import "uYouPlusThemes.h" // uYouPlus Themes
