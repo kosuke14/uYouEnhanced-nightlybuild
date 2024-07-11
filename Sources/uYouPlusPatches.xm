@@ -146,7 +146,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     return YES;
 }
 static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *parentView) {
-    if (!parentView) {
+    if (!parentView || ![parentView respondsToSelector:@selector(addSubview:)]) {
         return NO;
     }
 
