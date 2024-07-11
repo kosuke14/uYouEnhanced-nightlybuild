@@ -109,7 +109,7 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     return [NSString stringWithFormat:format, id];
 }
 static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
-    GPBMessage *shareEntity = [CustomGPBMessage deserializeFromString:serializedShareEntity];
+    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
 
@@ -117,7 +117,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
             return NO;
-        GPBMessage *clipMessage = [CustomGPBMessage parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
+        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
 
@@ -139,13 +139,12 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if (!shareUrl)
         return NO;
 
-        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-        [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-        return YES;
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+    [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+    return YES;
 }
-
 static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *parentView) {
-    GPBMessage *shareEntity = [CustomGPBMessage deserializeFromString:serializedShareEntity];
+    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
 
@@ -153,7 +152,7 @@ static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
             return NO;
-        GPBMessage *clipMessage = [CustomGPBMessage parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
+        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
 
@@ -178,7 +177,7 @@ static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
     UIPopoverPresentationController *popoverController = [activityViewController popoverPresentationController];
     popoverController.sourceView = parentView;
-    [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+    [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
     return YES;
 }
 
