@@ -183,8 +183,14 @@ static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
     UIPopoverPresentationController *popoverController = [activityViewController popoverPresentationController];
     popoverController.sourceView = parentView;
-    [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-    return YES;
+    popoverController.sourceRect = parentView.bounds;
+    popoverController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    UIViewController *topViewController = [YTUIUtils topViewControllerForPresenting];
+    if (topViewController) {
+        [topViewController presentViewController:activityViewController animated:YES completion:^{}];
+        return YES;
+
+    }
 }
 
 /* -------------------- iPad Layout -------------------- */
