@@ -144,6 +144,10 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     return YES;
 }
 static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *parentView) {
+    if (!parentView) {
+        return NO; // Ensure parentView is not nil
+    }
+
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
