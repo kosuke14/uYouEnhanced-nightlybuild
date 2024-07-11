@@ -140,7 +140,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if (!shareUrl)
         return FALSE;
 
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+//  UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
 //  [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
     return TRUE;
 }
