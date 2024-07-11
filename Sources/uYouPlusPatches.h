@@ -86,7 +86,6 @@
 @end
 
 @interface YTAccountScopedCommandResponderEvent
-@property (nonatomic, strong, readwrite) UIView *parentView;
 @property (nonatomic, strong, readwrite) YTICommand *command;
 @end
 
