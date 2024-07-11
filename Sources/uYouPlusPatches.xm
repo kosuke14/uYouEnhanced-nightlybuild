@@ -108,23 +108,19 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     NSString *id = [[NSString alloc] initWithData:[idField.lengthDelimitedList firstObject] encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
 }
-
 static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
-
     if ([fields hasField:ShareEntityFieldClip]) {
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
-            return FALSE;
+            return NO;
         GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
-
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldChannel, @"https://youtube.com/channel/%@");
-
     if (!shareUrl) {
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldPlaylist, @"%@");
         if (shareUrl) {
@@ -133,16 +129,23 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
             shareUrl = [@"https://youtube.com/playlist?list=" stringByAppendingString:shareUrl];
         }
     }
-
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
-
     if (!shareUrl)
-        return FALSE;
+        return NO;
 
-//  UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-//  [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-    return TRUE;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+        [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+        return YES;
+    } else {
+        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+        UIPopoverPresentationController *popoverController = [activityViewController popoverPresentationController];
+        popoverController.sourceView = sourceView;
+        popoverController.sourceRect = sourceRect;
+        [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+        return YES;
+    }
 }
 
 
