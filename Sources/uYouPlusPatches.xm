@@ -2,6 +2,7 @@
 
 # pragma mark - YouTube patches
 
+/*
 // Fix Google Sign in by @PoomSmart and @level3tjg (qnblackcat/uYouPlus#684)
 %hook NSBundle
 - (NSDictionary *)infoDictionary {
@@ -11,6 +12,7 @@
     return info;
 }
 %end
+*/
 
 // Workaround for MiRO92/uYou-for-YouTube#12, qnblackcat/uYouPlus#263
 %hook YTDataUtils
