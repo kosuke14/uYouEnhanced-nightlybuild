@@ -108,7 +108,7 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     NSString *id = [[NSString alloc] initWithData:[idField.lengthDelimitedList firstObject] encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
 }
-static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
+static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parentView) {
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
@@ -139,11 +139,12 @@ if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
     [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
     return YES;
 } else {
-        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-        UIPopoverPresentationController *popoverPresentationController = activityViewController.popoverPresentationController;
-        popoverPresentationController.sourceView = parentView;
-        [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-        return YES;
+        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+            UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+            activityViewController.popoverPresentationController.sourceView = parentView;
+            [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+            return YES;
+        }
     }
 }
 
