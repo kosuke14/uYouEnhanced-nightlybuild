@@ -162,7 +162,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parent
         return %orig;
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
-        return %orig;
+        return %orig;  
     if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity, self.parentView))
         return %orig;
 }
