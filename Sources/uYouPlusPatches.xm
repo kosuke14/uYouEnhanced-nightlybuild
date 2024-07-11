@@ -139,10 +139,11 @@ if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
     [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
     return YES;
 } else {
-        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
-            UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-            activityViewController.popoverPresentationController.sourceView = parentView;
-            [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+        UIPopoverPresentationController *popoverPresentationController = activityViewController.popoverPresentationController;
+        if (popoverPresentationController) {
+            popoverPresentationController.sourceView = parentView;
+            [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
             return YES;
         }
     }
