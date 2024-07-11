@@ -185,11 +185,10 @@ static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *
     popoverController.sourceView = parentView;
     popoverController.sourceRect = parentView.bounds;
     popoverController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    UIViewController *topViewController = [YTUIUtils topViewControllerForPresenting];
+    UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
     if (topViewController) {
         [topViewController presentViewController:activityViewController animated:YES completion:^{}];
         return YES;
-
     }
 }
 
