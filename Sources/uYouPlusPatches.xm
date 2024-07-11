@@ -142,12 +142,13 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         return NO;
 
     UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareUrl] applicationActivities:nil];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareUrl] applicationActivities:nil];
         [topViewController presentViewController:activityViewController animated:YES completion:^{}];
     } else {
-        UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:[[UIActivityViewController alloc] initWithActivityItems:@[shareUrl] applicationActivities:nil]];
-        [popoverController presentPopoverFromRect:CGRectMake(0, 0, 0, 0) inView:topViewController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+        CGRect rect = CGRectMake(CGRectGetMidX(topViewController.view.bounds), CGRectGetMaxY(topViewController.view.bounds), 0, 0);
+        [popoverController presentPopoverFromRect:rect inView:topViewController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
     return YES;
 }
@@ -166,51 +167,6 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         return %orig;
 }
 %end
-
-/* OLD
-%hook YTShareRequestViewController
-- (id)initWithService:(id)_service parentResponder:(id)_parentResponder {
-    id result = %orig;
-    // disable the default share sheet behavior and force the app to call [YTAccountScopedCommandRouter handleCommand] if available
-    if ([_parentResponder respondsToSelector:@selector(handleCommand:entry:fromView:sender:completionBlock:)]) {
-        [_parentResponder handleCommand:nil entry:nil fromView:nil sender:nil completionBlock:nil];
-    }
-    return result;
-}
-%end
-
-%hook YTAccountScopedCommandRouter
-- (BOOL)handleCommand:(id)command entry:(id)_entry fromView:(id)_fromView sender:(id)_sender completionBlock:(id)_completionBlock {
-    GPBExtensionDescriptor *shareEntityEndpointDescriptor = [%c(YTIShareEntityEndpoint) shareEntityEndpoint];
-    if (![command hasExtension:shareEntityEndpointDescriptor])
-        return %orig;
-    YTIShareEntityEndpoint *shareEntityEndpoint = [command getExtension:shareEntityEndpointDescriptor];
-    if(!shareEntityEndpoint.hasSerializedShareEntity)
-        return %orig;
-    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
-        return %orig;
-    return TRUE;
-}
-%end
-*/
-
-/* EXPERIMENTAL
-%hook YTAccountScopedCommandRouter
-- (BOOL)handleCommand:(id)command entry:(id)_entry fromView:(id)_fromView sender:(id)_sender completionBlock:(id)_completionBlock {
-    GPBExtensionDescriptor *shareEntityEndpointDescriptor = [%c(YTIShareEntityEndpoint) shareEntityEndpoint];
-    if (![command hasExtension:shareEntityEndpointDescriptor])
-        return %orig; 
-    YTIShareEntityEndpoint *shareEntityEndpoint = [command getExtension:shareEntityEndpointDescriptor]; 
-    if(!shareEntityEndpoint || !shareEntityEndpoint.hasSerializedShareEntity || !shareEntityEndpoint.serializedShareEntity) {
-        return %orig;
-    } 
-    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity)) {
-        return %orig;
-    }
-    return TRUE;
-}
-%end
-*/
 
 /* ------------------- iPhone Layout ------------------- */
 
@@ -232,6 +188,8 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         return %orig;
 }
 %end
+
+//
 
 // iOS 16 uYou crash fix - @level3tjg: https://github.com/qnblackcat/uYouPlus/pull/224
 // %group iOS16
