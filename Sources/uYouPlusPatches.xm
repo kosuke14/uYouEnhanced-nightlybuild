@@ -108,7 +108,19 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     NSString *id = [[NSString alloc] initWithData:[idField.lengthDelimitedList firstObject] encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
 }
-static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parentView) {
+static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
+    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
+    GPBUnknownFieldSet *fields = shareEntity.unknownFields;
+    NSString *shareUrl;
+
+    if ([fields hasField:ShareEntityFieldClip]) {
+        GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
+        if ([shareEntityClip.lengthDelimitedList count] != 1)
+            return NO;
+        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
+        shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
+    }
+static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *parentView) {
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
@@ -163,7 +175,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parent
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
         return %orig;  
-    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity, self.parentView))
+    if (!showNativeShareSheetTablet(shareEntityEndpoint.serializedShareEntity, self.parentView))
         return %orig;
 }
 %end
