@@ -112,6 +112,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parent
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
+
     if ([fields hasField:ShareEntityFieldClip]) {
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
@@ -119,8 +120,10 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parent
         GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
+
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldChannel, @"https://youtube.com/channel/%@");
+
     if (!shareUrl) {
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldPlaylist, @"%@");
         if (shareUrl) {
@@ -129,26 +132,26 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *parent
             shareUrl = [@"https://youtube.com/playlist?list=" stringByAppendingString:shareUrl];
         }
     }
+
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
+
     if (!shareUrl)
         return NO;
 
-if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-    [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-    return YES;
-} else {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-        UIPopoverPresentationController *popoverPresentationController = activityViewController.popoverPresentationController;
-        if (popoverPresentationController) {
-            popoverPresentationController.sourceView = parentView;
-            [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-            return YES;
-        }
+        [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+        return YES;
+    } else {
+        // iPad Version
+        UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+        UIPopoverPresentationController *popoverController = [activityViewController popoverPresentationController];
+        popoverController.sourceView = parentView;
+        [[YTUIUtils topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+        return YES;
     }
 }
-
 
 /* -------------------- iPad Layout -------------------- */
 
@@ -160,7 +163,7 @@ if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
         return %orig;
-    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
+    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity, self.parentView))
         return %orig;
 }
 %end
