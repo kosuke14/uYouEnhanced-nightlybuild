@@ -142,54 +142,12 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         return NO;
 
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        activityViewController.popoverPresentationController.sourceView = parentView;
+        activityViewController.popoverPresentationController.sourceRect = parentView.bounds;
+    }
     [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
     return YES;
-}
-static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *parentView) {
-    if (!parentView || ![parentView respondsToSelector:@selector(addSubview:)]) {
-        return NO;
-    }
-
-    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
-    GPBUnknownFieldSet *fields = shareEntity.unknownFields;
-    NSString *shareUrl;
-
-    if ([fields hasField:ShareEntityFieldClip]) {
-        GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
-        if ([shareEntityClip.lengthDelimitedList count] != 1)
-            return NO;
-        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
-        shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
-    }
-
-    if (!shareUrl)
-        shareUrl = extractIdWithFormat(fields, ShareEntityFieldChannel, @"https://youtube.com/channel/%@");
-
-    if (!shareUrl) {
-        shareUrl = extractIdWithFormat(fields, ShareEntityFieldPlaylist, @"%@");
-        if (shareUrl) {
-            if (![shareUrl hasPrefix:@"PL"] && ![shareUrl hasPrefix:@"FL"])
-                shareUrl = [shareUrl stringByAppendingString:@"&playnext=1"];
-            shareUrl = [@"https://youtube.com/playlist?list=" stringByAppendingString:shareUrl];
-        }
-    }
-
-    if (!shareUrl)
-        shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
-
-    if (!shareUrl)
-        return NO;
-
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-    UIPopoverPresentationController *popoverController = [activityViewController popoverPresentationController];
-    popoverController.sourceView = parentView;
-    popoverController.sourceRect = parentView.bounds;
-    popoverController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
-    if (topViewController) {
-        [topViewController presentViewController:activityViewController animated:YES completion:^{}];
-        return YES;
-    }
 }
 
 /* -------------------- iPad Layout -------------------- */
@@ -202,7 +160,7 @@ static BOOL showNativeShareSheetTablet(NSString *serializedShareEntity, UIView *
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
         return %orig;
-    if (!showNativeShareSheetTablet(shareEntityEndpoint.serializedShareEntity, self.parentView))
+    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
         return %orig;
 }
 %end
