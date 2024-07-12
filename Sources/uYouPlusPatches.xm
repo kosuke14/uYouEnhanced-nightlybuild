@@ -110,7 +110,7 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     NSString *id = [[NSString alloc] initWithData:[idField.lengthDelimitedList firstObject] encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
 }
-static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *sourceView) {
+static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
@@ -147,8 +147,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
 
     if (activityViewController.popoverPresentationController) {
-        activityViewController.popoverPresentationController.sourceView = sourceView;
-        activityViewController.popoverPresentationController.sourceRect = sourceView.bounds;
+        activityViewController.popoverPresentationController.sourceView = topViewController.view;
 
         CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
         CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
@@ -170,8 +169,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
         return %orig;
-    self.fromView = context.context.fromView;
-    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity, self.fromView))
+    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
         return %orig;
 }
 %end
@@ -179,7 +177,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 /* ------------------- iPhone Layout ------------------- */
 
 %hook ELMPBShowActionSheetCommand
-- (void)executeWithCommandContext:(ELMCommandContext*)context handler:(id)_handler {
+- (void)executeWithCommandContext:(id)_context handler:(id)_handler {
     if (!self.hasOnAppear)
         return %orig;
     GPBExtensionDescriptor *innertubeCommandDescriptor = [%c(YTIInnertubeCommandExtensionRoot) innertubeCommand];
@@ -192,7 +190,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     YTIUpdateShareSheetCommand *updateShareSheetCommand = [innertubeCommand getExtension:updateShareSheetCommandDescriptor];
     if (!updateShareSheetCommand.hasSerializedShareEntity)
         return %orig;
-    if (!showNativeShareSheet(updateShareSheetCommand.serializedShareEntity, context.context.fromView))
+    if (!showNativeShareSheet(updateShareSheetCommand.serializedShareEntity))
         return %orig;
 }
 %end
