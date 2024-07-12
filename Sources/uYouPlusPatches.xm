@@ -148,7 +148,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 
     if (activityViewController.popoverPresentationController) {
         activityViewController.popoverPresentationController.sourceView = sourceView;
-        activityViewController.popoverPresentationController.sourceRect = topViewController.view.bounds;
+        activityViewController.popoverPresentationController.sourceRect = sourceView.bounds;
 
         CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
         CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
@@ -170,6 +170,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!shareEntityEndpoint.hasSerializedShareEntity)
         return %orig;
+    self.fromView = context.context.fromView;
     if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity, self.fromView))
         return %orig;
 }
