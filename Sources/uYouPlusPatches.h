@@ -1,5 +1,6 @@
 #import <UIKit/UIActivityViewController.h>
 #import <YouTubeHeader/YTUIUtils.h>
+#import <YouTubeHeader/YTCommonUtils.h>
 #import <YouTubeHeader/YTColorPalette.h>
 #import <YouTubeHeader/YTCommonColorPalette.h>
 #import "Tweaks/protobuf/objectivec/GPBDescriptor.h"
