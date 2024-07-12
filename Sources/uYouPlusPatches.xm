@@ -146,8 +146,9 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
 
     UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        activityViewController.popoverPresentationController.sourceView = [%c(YTCommonUtils) mainWindow];
+    if (activityViewController.popoverPresentationController) {
+        activityViewController.popoverPresentationController.sourceView = topViewController.view;
+        activityViewController.popoverPresentationController.canOverlapSourceViewRect = YES;
     }
 
     [topViewController presentViewController:activityViewController animated:YES completion:nil];
