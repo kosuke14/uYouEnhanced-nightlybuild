@@ -148,11 +148,14 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
 
     if (activityViewController.popoverPresentationController) {
         activityViewController.popoverPresentationController.sourceView = topViewController.view;
-        activityViewController.popoverPresentationController.canOverlapSourceViewRect = YES;
+
+        CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+        CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+
+        activityViewController.popoverPresentationController.sourceRect = CGRectMake(screenWidth / 2.0, screenHeight, 0, 0);
+        activityViewController.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
     }
-
     [topViewController presentViewController:activityViewController animated:YES completion:nil];
-
     return YES;
 }
 
