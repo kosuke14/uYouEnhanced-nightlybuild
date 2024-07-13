@@ -1389,7 +1389,7 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
 %hook ASCollectionView // This stopped working on May 14th 2024 due to a Server-Side Change from YouTube.
 
 - (CGSize)sizeForElement:(ASCollectionElement  * _Nullable)element {
-    if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
+    if ([self.accessibilityIdentifier isEqualToString:@"video_action_bar.eml"]) { // id.video.scrollable_action_bar
         ASCellNode *node = [element node];
         ASNodeController *nodeController = [node controller];
         if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
@@ -1408,11 +1408,11 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"id.ui.add_to.offline.button"])) {
+        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"download_button.eml"])) { // id.ui.add_to.offline.button
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideCommentSection_enabled") && findCell(nodeController, @[@"id.ui.carousel_header"])) {
+        if (IS_ENABLED(@"hideCommentSection_enabled") && findCell(nodeController, @[@"comment_teaser_carousel_item.eml"])) { // id.ui.carousel_header
             return CGSizeZero;
         }
     }
