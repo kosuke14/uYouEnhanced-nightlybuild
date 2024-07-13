@@ -857,20 +857,20 @@ static int contrastMode() {
 %group gFullscreenToTheRight
 %hook YTWatchViewController
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    if ([self isFullscreen] && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if ([self isFullscreen] && [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return UIInterfaceOrientationLandscapeRight;
     }
     return %orig;
 }
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    if ([self isFullscreen] && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if ([self isFullscreen] && [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return UIInterfaceOrientationMaskLandscape;
     }
     return %orig;
 }
 %new
 - (void)forceRightFullscreenOrientation { // custom void
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         NSNumber *value = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
         [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
     }
