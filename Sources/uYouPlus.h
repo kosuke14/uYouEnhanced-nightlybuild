@@ -42,6 +42,7 @@
 #import <YouTubeHeader/YTPlayerOverlayProvider.h>
 #import <YouTubeHeader/YTPlayerOverlayManager.h>
 #import <YouTubeHeader/YTReelModel.h>
+#import <YouTubeHeader/YTReelPlayerButton.h>
 #import <YouTubeHeader/YTReelWatchPlaybackOverlayView.h>
 #import <YouTubeHeader/YTResponder.h>
 #import <YouTubeHeader/YTVideoQualitySwitchOriginalController.h>
