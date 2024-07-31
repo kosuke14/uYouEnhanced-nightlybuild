@@ -14,6 +14,44 @@
 - (void)triggerHTTP3Request;
 @end
 
+@implementation NetworkManager
+- (void)triggerHTTP3Request {
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+    config.HTTPShouldUsePipelining = YES;
+    config.HTTPShouldSetCookies = YES;
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    
+    NSURL *url = [NSURL URLWithString:@"https://google.com"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60.0];
+    request.HTTPShouldHandleCookies = YES;
+    request.assumesHTTP3Capable = YES;
+    
+    os_log("Task will start, url: %@", url.absoluteString);
+    
+    [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            os_log("Task transport error %@", error.localizedDescription);
+            return;
+        }
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        
+        if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 300) {
+            os_log("Task finished with status %ld, bytes %lu", (long)httpResponse.statusCode, (unsigned long)data.length);
+        } else {
+            NSLog(@"Task response status code is invalid; received %ld, but expected 2xx", (long)httpResponse.statusCode);
+        }
+        
+    }] resume];
+}
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics {
+    NSArray *protocols = [metrics.transactionMetrics valueForKeyPath:@"networkProtocolName"];
+    os_log("Protocols: %@", protocols);
+}
+@end
+
 @interface PlayerManager : NSObject
 // Prevent uYou player bar from showing when not playing downloaded media
 - (float)progress;
