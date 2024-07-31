@@ -1,3 +1,4 @@
+#import <os/log.h>
 #import <UIKit/UIActivityViewController.h>
 #import <YouTubeHeader/YTUIUtils.h>
 #import <YouTubeHeader/YTCommonUtils.h>
@@ -7,6 +8,11 @@
 #import "Tweaks/protobuf/objectivec/GPBUnknownField.h"
 #import "Tweaks/protobuf/objectivec/GPBUnknownFieldSet.h"
 #import "uYouPlus.h"
+
+// http3 protocol (iOS 15+)
+@interface NetworkManager : NSObject <NSURLSessionDataDelegate>
+- (void)triggerHTTP3Request;
+@end
 
 @interface PlayerManager : NSObject
 // Prevent uYou player bar from showing when not playing downloaded media
