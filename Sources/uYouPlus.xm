@@ -1287,14 +1287,11 @@ static int contrastMode() {
 - (void)didMoveToWindow {
     %orig;
     if (IS_ENABLED(@"hidePreviewCommentSection_enabled")) {
-        if ([[self valueForKeyPath:@"node.accessibilityIdentifier"] isEqualToString:@"comments_entry_point_teaser.eml"]) {
-            id node = [self valueForKeyPath:@"node"];
-            if ([node isKindOfClass:[ASDisplayNode class]]) {
-                node.hidden = YES;
-                node.opaque = YES;
-                node.userInteractionEnabled = NO;
-                [node removeFromSuperview];
-            }
+        if ([[self accessibilityIdentifier] isEqualToString:@"comments_entry_point_teaser.eml"]) {
+            self.hidden = YES;
+            self.opaque = YES;
+            self.userInteractionEnabled = NO;
+            [self removeFromSuperview];
         }
     }
 }
