@@ -9,6 +9,7 @@
 #import "Tweaks/protobuf/objectivec/GPBUnknownFieldSet.h"
 #import "uYouPlus.h"
 
+/*
 // http3 protocol (iOS 15+)
 @interface NetworkManager : NSObject <NSURLSessionDataDelegate>
 - (void)triggerHTTP3Request;
@@ -51,6 +52,7 @@
     os_log("Protocols: %@", protocols);
 }
 @end
+*/
 
 @interface PlayerManager : NSObject
 // Prevent uYou player bar from showing when not playing downloaded media

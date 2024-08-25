@@ -1279,18 +1279,20 @@ static int contrastMode() {
         [self setNeedsLayout];
         [self removeFromSuperview];
     }
+}
+%end
 
-// Hide the Comment Section Previews under the Video Player - @arichornlover
-    if ((IS_ENABLED(@"hidePreviewCommentSection_enabled")) && ([self.accessibilityIdentifier isEqualToString:@"id.ui.comments_entry_point_teaser"])) {
-        self.hidden = YES;
-        self.opaque = YES;
-        self.userInteractionEnabled = NO;
-        CGRect bounds = self.frame;
-        bounds.size.height = 0;
-        self.frame = bounds;
-        [self.superview layoutIfNeeded];
-        [self setNeedsLayout];
-        [self removeFromSuperview];
+// Hide the comment section previews under the video player - @arichornlover
+%hook ELMComponent
+- (void)didMoveToWindow {
+    %orig;
+    if (IS_ENABLED(@"hidePreviewCommentSection_enabled")) {
+        if ([[self accessibilityIdentifier] isEqualToString:@"comments_entry_point_teaser.eml"]) {
+            self.hidden = YES;
+            self.opaque = YES;
+            self.userInteractionEnabled = NO;
+            [self removeFromSuperview];
+        }
     }
 }
 %end
